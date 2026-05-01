@@ -16,10 +16,11 @@ if command -v rsync >/dev/null 2>&1; then
     --exclude '.git/' \
     --exclude '.cpanel.yml' \
     --exclude 'scripts/' \
+    --exclude 'api/.env' \
     --exclude 'logs/' \
     "${REPO_ROOT}/" "${DEPLOY_PATH}/"
 else
-  tar --exclude='.git' --exclude='.cpanel.yml' --exclude='scripts' --exclude='logs' -C "${REPO_ROOT}" -cf - . | tar -C "${DEPLOY_PATH}" -xf -
+  tar --exclude='.git' --exclude='.cpanel.yml' --exclude='scripts' --exclude='logs' --exclude='api/.env' -C "${REPO_ROOT}" -cf - . | tar -C "${DEPLOY_PATH}" -xf -
 fi
 
 echo "[deploy] Completed."
