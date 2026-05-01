@@ -99,11 +99,12 @@ loadEnvFile(dirname(__DIR__) . '/.env');
 loadEnvFile(__DIR__ . '/.env');
 
 // Database / auth configuration
+// Uses env values first; falls back to manual shared-hosting values.
 define('DB_HOST', envValue('DB_HOST', 'localhost'));
-define('DB_USER', requireEnv('DB_USER'));
-define('DB_PASS', requireEnv('DB_PASSWORD'));
-define('DB_NAME', requireEnv('DB_NAME'));
-define('JWT_SECRET', requireEnv('JWT_SECRET'));
+define('DB_USER', envValue('DB_USER', 'ettesiir_orhan123'));
+define('DB_PASS', envValue('DB_PASSWORD', 'Orhanbektas5566.'));
+define('DB_NAME', envValue('DB_NAME', 'ettesiir_orhan123'));
+define('JWT_SECRET', envValue('JWT_SECRET', 'eticaret-fallback-secret-change-this'));
 
 // PDO Connection
 function getDB() {
