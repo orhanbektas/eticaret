@@ -36,8 +36,49 @@ function logError($message) {
     file_put_contents($logDir . '/error.log', $line, FILE_APPEND);
 }
 
+function loadEnvFile($path) {
+    if (!is_file($path) || !is_readable($path)) {
+        return;
+    }
+
+    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if (!is_array($lines)) {
+        return;
+    }
+
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) {
+            continue;
+        }
+
+        $eqPos = strpos($line, '=');
+        if ($eqPos === false) {
+            continue;
+        }
+
+        $key = trim(substr($line, 0, $eqPos));
+        $value = trim(substr($line, $eqPos + 1));
+        $value = trim($value, "\"'");
+
+        if ($key === '') {
+            continue;
+        }
+
+        putenv($key . '=' . $value);
+        $_ENV[$key] = $value;
+        $_SERVER[$key] = $value;
+    }
+}
+
 function envValue($key, $default = null) {
     $value = getenv($key);
+    if (($value === false || $value === '') && isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        $value = $_ENV[$key];
+    }
+    if (($value === false || $value === '') && isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        $value = $_SERVER[$key];
+    }
     if ($value === false || $value === '') {
         return $default;
     }
@@ -52,6 +93,9 @@ function requireEnv($key) {
     }
     return $value;
 }
+
+// Load local .env first for shared hosting environments
+loadEnvFile(__DIR__ . '/.env');
 
 // Database / auth configuration
 define('DB_HOST', envValue('DB_HOST', 'localhost'));
