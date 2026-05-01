@@ -98,13 +98,41 @@ function requireEnv($key) {
 loadEnvFile(dirname(__DIR__) . '/.env');
 loadEnvFile(__DIR__ . '/.env');
 
+// Optional local config file for shared hosting (not committed):
+// <?php return ['DB_HOST'=>'localhost','DB_USER'=>'...','DB_PASSWORD'=>'...','DB_NAME'=>'...','JWT_SECRET'=>'...'];
+$localConfig = [];
+$localConfigPath = __DIR__ . '/config.local.php';
+if (is_file($localConfigPath) && is_readable($localConfigPath)) {
+    $loaded = include $localConfigPath;
+    if (is_array($loaded)) {
+        $localConfig = $loaded;
+    }
+}
+
 // Database / auth configuration
 // Uses env values first; falls back to manual shared-hosting values.
-define('DB_HOST', envValue('DB_HOST', 'localhost'));
-define('DB_USER', envValue('DB_USER', 'ettesiir_orhan123'));
-define('DB_PASS', envValue('DB_PASSWORD', 'Orhanbektas5566.'));
-define('DB_NAME', envValue('DB_NAME', 'ettesiir_orhan123'));
-define('JWT_SECRET', envValue('JWT_SECRET', 'eticaret-fallback-secret-change-this'));
+define('DB_HOST', envValue('DB_HOST', $localConfig['DB_HOST'] ?? 'localhost'));
+define('DB_USER', envValue('DB_USER', $localConfig['DB_USER'] ?? ''));
+define('DB_PASS', envValue('DB_PASSWORD', $localConfig['DB_PASSWORD'] ?? ''));
+define('DB_NAME', envValue('DB_NAME', $localConfig['DB_NAME'] ?? ''));
+define('JWT_SECRET', envValue('JWT_SECRET', $localConfig['JWT_SECRET'] ?? ''));
+
+if (DB_USER === '') {
+    logError("Missing required environment variable: DB_USER");
+    sendJSON(['error' => 'Sunucu konfigrasyonu eksik'], 500);
+}
+if (DB_PASS === '') {
+    logError("Missing required environment variable: DB_PASSWORD");
+    sendJSON(['error' => 'Sunucu konfigrasyonu eksik'], 500);
+}
+if (DB_NAME === '') {
+    logError("Missing required environment variable: DB_NAME");
+    sendJSON(['error' => 'Sunucu konfigrasyonu eksik'], 500);
+}
+if (JWT_SECRET === '') {
+    logError("Missing required environment variable: JWT_SECRET");
+    sendJSON(['error' => 'Sunucu konfigrasyonu eksik'], 500);
+}
 
 // PDO Connection
 function getDB() {

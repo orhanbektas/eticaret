@@ -1,0 +1,9 @@
+<?php
+// Copy this file to api/config.local.php on the server (do not commit secrets).
+return [
+    'DB_HOST' => 'localhost',
+    'DB_USER' => 'cpanel_db_user',
+    'DB_PASSWORD' => 'cpanel_db_password',
+    'DB_NAME' => 'cpanel_db_name',
+    'JWT_SECRET' => 'change-this-to-a-strong-random-secret'
+];
