@@ -94,7 +94,8 @@ function requireEnv($key) {
     return $value;
 }
 
-// Load local .env first for shared hosting environments
+// Load .env from multiple common shared-hosting locations
+loadEnvFile(dirname(__DIR__) . '/.env');
 loadEnvFile(__DIR__ . '/.env');
 
 // Database / auth configuration
