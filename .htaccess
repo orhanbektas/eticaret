@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# API requests -> PHP router
+RewriteRule ^api(/.*)?$ api/index.php [QSA,L]
+
+# Keep direct file/dir requests untouched
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# SPA fallback for refresh/deep links
+RewriteRule ^ index.php [L]
